@@ -6,7 +6,7 @@
 
 ---
 
-## Features
+## Features##
 
 - Supports multiple resume formats: `.pdf`, `.docx`, `.txt`
 - Uses TF-IDF vectorization and cosine similarity for scoring
