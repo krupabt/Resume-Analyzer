@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% block title %}Candidate Analysis Mode — Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <div class="mode-pill candidate-pill">Candidate Mode</div>
+        <h1 class="page-title">Resume Alignment & Gap Analysis</h1>
+        <p class="page-subtitle">
+            Upload your resume against a target job description to evaluate keyword relevance, discover missing technical skills, and review actionable recommendations.
+        </p>
+    </div>
+
+    {% if not result %}
+    <!-- Input Form Card -->
+    <div class="card form-card">
+        <form action="{{ url_for('candidate_mode') }}" method="POST" enctype="multipart/form-data" id="candidateForm">
+            <!-- Job Description Field -->
+            <div class="form-group">
+                <div class="label-row">
+                    <label for="jobDescription" class="form-label">
+                        Target Job Description <span class="required">*</span>
+                    </label>
+                    <button type="button" class="btn-text" id="loadSampleJdBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        Load Sample Tech Job Description
+                    </button>
+                </div>
+                <textarea 
+                    id="jobDescription" 
+                    name="job_description" 
+                    class="form-control textarea-field" 
+                    rows="7" 
+                    placeholder="Paste the target job description, requirements, and responsibilities here..." 
+                    required
+                >{{ job_description or '' }}</textarea>
+                <span class="field-hint">Include full job requirements, skills, and qualifications for the most accurate match.</span>
+            </div>
+
+            <!-- Single Resume Upload Zone -->
+            <div class="form-group">
+                <label class="form-label">
+                    Your Resume File (PDF, DOCX, TXT) <span class="required">*</span>
+                </label>
+                
+                <div class="dropzone" id="singleDropzone">
+                    <input 
+                        type="file" 
+                        id="resumeFileInput" 
+                        name="resume_file" 
+                        accept=".pdf,.docx,.txt" 
+                        class="dropzone-file-input" 
+                        required
+                    >
+                    <div class="dropzone-content">
+                        <div class="dropzone-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <div class="dropzone-text">
+                            <strong>Click to upload</strong> or drag and drop your resume
+                        </div>
+                        <div class="dropzone-subtext">Supported formats: PDF, DOCX, TXT (Max 5MB)</div>
+                    </div>
+                    <div class="file-preview-chip" id="filePreviewChip" style="display: none;">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name" id="fileNameDisplay">filename.pdf</span>
+                        <span class="file-size" id="fileSizeDisplay">120 KB</span>
+                        <button type="button" class="btn-remove-file" id="removeFileBtn" aria-label="Remove file">&times;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Action -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg btn-block" id="submitBtn">
+                    <span class="btn-text-default">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        Analyze Resume Relevance
+                    </span>
+                    <span class="btn-text-loading" style="display: none;">
+                        <span class="spinner"></span> Analyzing NLP Vectors & Skills...
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% else %}
+    <!-- Candidate Analysis Results Dashboard -->
+    <div class="dashboard-container">
+        <!-- Top Toolbar -->
+        <div class="dashboard-toolbar">
+            <div class="analyzed-file-info">
+                <span class="file-badge">Analyzed Document:</span>
+                <strong class="analyzed-filename">{{ result.filename }}</strong>
+            </div>
+            <div class="toolbar-actions">
+                <button onclick="window.print()" class="btn btn-outline btn-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    Print / Save Report
+                </button>
+                <a href="{{ url_for('candidate_mode') }}" class="btn btn-secondary btn-sm">
+                    Analyze Another Resume
+                </a>
+            </div>
+        </div>
+
+        <!-- Score Overview Banner -->
+        <div class="card score-hero-card">
+            <div class="score-hero-grid">
+                <!-- Circular Score Gauge -->
+                <div class="gauge-column">
+                    <div class="score-circle-wrapper">
+                        <svg class="score-circle" width="150" height="150" viewBox="0 0 150 150">
+                            <circle class="circle-bg" cx="75" cy="75" r="62" stroke-width="12"></circle>
+                            <circle 
+                                class="circle-progress" 
+                                cx="75" 
+                                cy="75" 
+                                r="62" 
+                                stroke-width="12"
+                                style="stroke-dasharray: 389.55; stroke-dashoffset: {{ 389.55 - (389.55 * result.relevance_score / 100) }};"
+                            ></circle>
+                        </svg>
+                        <div class="circle-content">
+                            <span class="circle-score">{{ result.relevance_score }}%</span>
+                            <span class="circle-label">Relevance Index</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score Explanations & Component Breakdown -->
+                <div class="score-details-column">
+                    <div class="score-status-header">
+                        <span class="score-tier-badge {% if result.relevance_score >= 70 %}tier-high{% elif result.relevance_score >= 45 %}tier-mid{% else %}tier-low{% endif %}">
+                            {% if result.relevance_score >= 70 %}
+                                High Keyword & Skill Alignment
+                            {% elif result.relevance_score >= 45 %}
+                                Moderate Alignment — Targeted Gaps
+                            {% else %}
+                                Low Alignment — Significant Gaps
+                            {% endif %}
+                        </span>
+                        <h3>Overall Relevance Score Breakdown</h3>
+                    </div>
+                    <p class="score-explanation-text">
+                        The relevance index is an assistive composite of textual semantic overlap and explicit required technical skills.
+                    </p>
+
+                    <div class="component-metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-title">TF-IDF Text Similarity</div>
+                            <div class="metric-value">{{ result.text_similarity_score }}%</div>
+                            <div class="metric-weight">Weight: {{ result.breakdown.text_weight }}</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" style="width: {{ result.text_similarity_score }}%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-title">Explicit Skill Match Rate</div>
+                            <div class="metric-value">{{ result.skill_match_percentage }}%</div>
+                            <div class="metric-weight">Weight: {{ result.breakdown.skill_weight }}</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill fill-accent" style="width: {{ result.skill_match_percentage }}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Breakdown Grid -->
+        <div class="two-col-grid">
+            <!-- Matched Skills Card -->
+            <div class="card skills-card matched-skills-card">
+                <div class="card-header">
+                    <div class="header-with-badge">
+                        <span class="icon-indicator success-indicator">✓</span>
+                        <h3>Matched Technical Skills</h3>
+                        <span class="count-badge count-success">{{ result.matched_skills|length }} Found</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if result.matched_skills %}
+                        <div class="skill-tags-group">
+                            {% for skill in result.matched_skills %}
+                                <span class="skill-tag skill-matched">
+                                    <span class="tag-icon">✓</span> {{ skill }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-state-text">No explicit technical skills matched the job description directly.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Missing Skills Card -->
+            <div class="card skills-card missing-skills-card">
+                <div class="card-header">
+                    <div class="header-with-badge">
+                        <span class="icon-indicator warning-indicator">!</span>
+                        <h3>Missing Skills from Job Description</h3>
+                        <span class="count-badge count-warning">{{ result.missing_skills|length }} Gaps</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if result.missing_skills %}
+                        <div class="skill-tags-group">
+                            {% for skill in result.missing_skills %}
+                                <span class="skill-tag skill-missing">
+                                    <span class="tag-icon">+</span> {{ skill }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-state-text success-text">Outstanding! Your resume covers all explicit technical skills identified in the job description.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Keywords Analysis Grid -->
+        <div class="two-col-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Relevant Keywords Identified</h3>
+                </div>
+                <div class="card-body">
+                    {% if result.matched_keywords %}
+                        <div class="keyword-chips">
+                            {% for kw in result.matched_keywords %}
+                                <span class="keyword-chip">{{ kw }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Standard vocabulary overlap detected.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Important Job Terminology to Consider</h3>
+                </div>
+                <div class="card-body">
+                    {% if result.missing_keywords %}
+                        <div class="keyword-chips">
+                            {% for kw in result.missing_keywords %}
+                                <span class="keyword-chip chip-missing">{{ kw }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Job vocabulary is well represented.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Detection Checklist -->
+        <div class="card">
+            <div class="card-header">
+                <div class="header-with-badge">
+                    <h3>Resume Structure & Section Detection</h3>
+                    <span class="count-badge count-info">{{ result.section_coverage }}% Standard Sections Detected</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-intro-text">
+                    Resume Analyzer scans for conventional headings to assess structural clarity. Note: Using creative or combined headings (e.g. "Background & Tech") is acceptable and does not penalize your match score.
+                </p>
+                <div class="sections-grid">
+                    {% for section_name, is_detected in result.sections.items() %}
+                        <div class="section-badge-item {% if is_detected %}detected{% else %}not-detected{% endif %}">
+                            <span class="section-status-icon">
+                                {% if is_detected %}✓{% else %}○{% endif %}
+                            </span>
+                            <span class="section-name">{{ section_name }}</span>
+                            <span class="section-label">{% if is_detected %}Detected{% else %}Not Found{% endif %}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence-Based Recommendations & Strengths -->
+        <div class="card recommendations-card">
+            <div class="card-header">
+                <h3>Evidence-Based Feedback & Actionable Recommendations</h3>
+            </div>
+            <div class="card-body">
+                <div class="feedback-columns">
+                    <!-- Strengths Column -->
+                    <div class="feedback-col strengths-col">
+                        <h4 class="feedback-title strengths-title">
+                            <span class="col-icon">⭐</span> Identified Resume Strengths
+                        </h4>
+                        <ul class="feedback-list">
+                            {% for strength in result.strengths %}
+                                <li>{{ strength }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- Areas for Improvement Column -->
+                    <div class="feedback-col improvements-col">
+                        <h4 class="feedback-title improvements-title">
+                            <span class="col-icon">🎯</span> Areas for Optimization
+                        </h4>
+                        <ul class="feedback-list">
+                            {% for imp in result.improvements %}
+                                <li>{{ imp }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Action Items Checklist -->
+                <div class="action-checklist-box">
+                    <h4 class="action-checklist-title">
+                        <span class="col-icon">📋</span> Prioritized Action Checklist
+                    </h4>
+                    <div class="action-checklist">
+                        {% for action in result.action_items %}
+                            <div class="checklist-item">
+                                <span class="checklist-box"></span>
+                                <span class="checklist-text">{{ action }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/candidate.js') }}"></script>
+{% endblock %}

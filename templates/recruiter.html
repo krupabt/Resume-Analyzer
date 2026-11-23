@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %}Recruiter Ranking Mode — Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <div class="mode-pill recruiter-pill">Recruiter Mode</div>
+        <h1 class="page-title">Candidate Batch Screening & Ranking</h1>
+        <p class="page-subtitle">
+            Upload up to 10 resumes simultaneously to perform deterministic relevance ranking, evaluate skill match rates, and download structured CSV reports.
+        </p>
+    </div>
+
+    {% if not results %}
+    <!-- Input Form Card -->
+    <div class="card form-card">
+        <form action="{{ url_for('recruiter_mode') }}" method="POST" enctype="multipart/form-data" id="recruiterForm">
+            <!-- Job Description Field -->
+            <div class="form-group">
+                <div class="label-row">
+                    <label for="jobDescription" class="form-label">
+                        Target Job Description & Requirements <span class="required">*</span>
+                    </label>
+                    <button type="button" class="btn-text" id="loadSampleJdBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        Load Sample Tech Job Description
+                    </button>
+                </div>
+                <textarea 
+                    id="jobDescription" 
+                    name="job_description" 
+                    class="form-control textarea-field" 
+                    rows="7" 
+                    placeholder="Enter the job description, core technical requirements, and qualifications..." 
+                    required
+                >{{ job_description or '' }}</textarea>
+                <span class="field-hint">Specify technical tools, databases, and frameworks for deep skill alignment.</span>
+            </div>
+
+            <!-- Multi-Resume Upload Zone -->
+            <div class="form-group">
+                <div class="label-row">
+                    <label class="form-label">
+                        Candidate Resumes (1 to 10 Files) <span class="required">*</span>
+                    </label>
+                    <span class="file-count-badge" id="fileCountBadge">0 / 10 Selected</span>
+                </div>
+                
+                <div class="dropzone" id="multiDropzone">
+                    <input 
+                        type="file" 
+                        id="resumeFilesInput" 
+                        name="resume_files" 
+                        accept=".pdf,.docx,.txt" 
+                        multiple 
+                        class="dropzone-file-input" 
+                        required
+                    >
+                    <div class="dropzone-content">
+                        <div class="dropzone-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="dropzone-text">
+                            <strong>Choose files</strong> or drag and drop candidate resumes
+                        </div>
+                        <div class="dropzone-subtext">PDF, DOCX, TXT formats supported (Up to 10 resumes at once)</div>
+                    </div>
+                </div>
+
+                <!-- Live Selected Files List -->
+                <div class="selected-files-container" id="selectedFilesContainer" style="display: none;">
+                    <div class="selected-files-header">
+                        <span>Selected Resumes</span>
+                        <button type="button" class="btn-text btn-clear-all" id="clearAllFilesBtn">Clear All</button>
+                    </div>
+                    <ul class="selected-files-list" id="selectedFilesList"></ul>
+                </div>
+            </div>
+
+            <!-- Submit Action -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-secondary btn-lg btn-block" id="submitBtn">
+                    <span class="btn-text-default">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        Rank Resumes deterministically
+                    </span>
+                    <span class="btn-text-loading" style="display: none;">
+                        <span class="spinner"></span> Processing Multi-Document Vectors...
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% else %}
+    <!-- Recruiter Ranking Results Dashboard -->
+    <div class="dashboard-container">
+        <!-- Top Toolbar & Export Actions -->
+        <div class="dashboard-toolbar">
+            <div class="analyzed-file-info">
+                <span class="file-badge">Evaluated Batch:</span>
+                <strong>{{ total_analyzed }} Candidate Resumes Ranked</strong>
+            </div>
+            <div class="toolbar-actions">
+                <!-- CSV Export Form -->
+                <form action="{{ url_for('export_csv') }}" method="POST" class="d-inline">
+                    <input type="hidden" name="job_description" value="{{ job_description }}">
+                    {% for item in results %}
+                        <input type="hidden" name="rank[]" value="{{ item.rank }}">
+                        <input type="hidden" name="name[]" value="{{ item.name }}">
+                        <input type="hidden" name="relevance_score[]" value="{{ item.relevance_score }}">
+                        <input type="hidden" name="text_score[]" value="{{ item.text_similarity_score }}">
+                        <input type="hidden" name="skill_score[]" value="{{ item.skill_match_percentage }}">
+                        <input type="hidden" name="matched_skills[]" value="{{ item.matched_skills|join(', ') }}">
+                        <input type="hidden" name="missing_skills[]" value="{{ item.missing_skills|join(', ') }}">
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export Ranking CSV
+                    </button>
+                </form>
+
+                <button type="button" class="btn btn-outline btn-sm" id="openCompareBtn" disabled>
+                    Compare Selected (0/2)
+                </button>
+
+                <a href="{{ url_for('recruiter_mode') }}" class="btn btn-secondary btn-sm">
+                    Upload New Batch
+                </a>
+            </div>
+        </div>
+
+        <!-- Compliance & Responsible AI Notice -->
+        <div class="compliance-banner">
+            <div class="banner-icon">⚖️</div>
+            <div class="banner-text">
+                <strong>Algorithmic Review Notice:</strong> Rankings are calculated via deterministic TF-IDF cosine similarity and explicit technical skills overlap. This system supports candidate screening and must not independently determine hiring or employment decisions. Protected characteristics are never analyzed.
+            </div>
+        </div>
+
+        <!-- Top 3 Highlights Section -->
+        <div class="top-three-section">
+            <h2 class="section-title">Top Matching Candidates</h2>
+            <div class="top-three-grid">
+                {% for item in results[:3] %}
+                    <div class="top-candidate-card rank-{{ item.rank }}">
+                        <div class="top-card-header">
+                            <span class="rank-badge rank-badge-{{ item.rank }}">
+                                {% if item.rank == 1 %}🥇 1st Place{% elif item.rank == 2 %}🥈 2nd Place{% else %}🥉 3rd Place{% endif %}
+                            </span>
+                            <span class="candidate-score">{{ item.relevance_score }}%</span>
+                        </div>
+                        <h3 class="candidate-filename" title="{{ item.name }}">{{ item.name }}</h3>
+                        
+                        <div class="top-card-metrics">
+                            <div class="metric-row">
+                                <span class="metric-key">Skill Match:</span>
+                                <span class="metric-val font-semibold">{{ item.skill_match_percentage }}%</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-key">Text Similarity:</span>
+                                <span class="metric-val">{{ item.text_similarity_score }}%</span>
+                            </div>
+                        </div>
+
+                        <div class="top-card-skills">
+                            <div class="skills-label">Top Matched Skills:</div>
+                            <div class="skill-mini-tags">
+                                {% for s in item.matched_skills[:4] %}
+                                    <span class="skill-mini-tag matched">{{ s }}</span>
+                                {% else %}
+                                    <span class="text-muted small">No explicit skills matched</span>
+                                {% endfor %}
+                                {% if item.matched_skills|length > 4 %}
+                                    <span class="skill-mini-tag more">+{{ item.matched_skills|length - 4 }} more</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Complete Deterministic Ranking Table -->
+        <div class="card table-card">
+            <div class="card-header table-header">
+                <h3>Full Candidate Ranking List</h3>
+                <span class="table-subtitle">Deterministic tie-breaking: Score &rarr; Skill Match &rarr; Filename</span>
+            </div>
+            <div class="table-responsive">
+                <table class="ranking-table" id="rankingTable">
+                    <thead>
+                        <tr>
+                            <th width="50">Select</th>
+                            <th width="70">Rank</th>
+                            <th>Candidate Resume</th>
+                            <th width="150">Relevance Score</th>
+                            <th width="120">Text Sim.</th>
+                            <th width="120">Skill Match</th>
+                            <th>Matched Skills</th>
+                            <th>Missing Skills</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in results %}
+                            <tr class="table-row {% if item.is_top_three %}top-row{% endif %}" data-name="{{ item.name }}" data-score="{{ item.relevance_score }}" data-text-score="{{ item.text_similarity_score }}" data-skill-score="{{ item.skill_match_percentage }}" data-matched="{{ item.matched_skills|join(', ') }}" data-missing="{{ item.missing_skills|join(', ') }}">
+                                <td class="text-center">
+                                    <input type="checkbox" class="compare-checkbox" aria-label="Select {{ item.name }} for comparison">
+                                </td>
+                                <td>
+                                    <span class="rank-num rank-{{ item.rank }}">#{{ item.rank }}</span>
+                                </td>
+                                <td class="candidate-cell">
+                                    <span class="file-icon">📄</span>
+                                    <strong class="candidate-name" title="{{ item.name }}">{{ item.name }}</strong>
+                                </td>
+                                <td>
+                                    <div class="table-score-wrapper">
+                                        <span class="score-number">{{ item.relevance_score }}%</span>
+                                        <div class="score-mini-bar">
+                                            <div class="score-mini-fill" style="width: {{ item.relevance_score }}%;"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ item.text_similarity_score }}%</td>
+                                <td>
+                                    <span class="badge {% if item.skill_match_percentage >= 60 %}badge-success{% elif item.skill_match_percentage >= 30 %}badge-warning{% else %}badge-neutral{% endif %}">
+                                        {{ item.skill_match_percentage }}%
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="table-skills-cell">
+                                        {% for skill in item.matched_skills[:3] %}
+                                            <span class="skill-tag-pill match">{{ skill }}</span>
+                                        {% endfor %}
+                                        {% if item.matched_skills|length > 3 %}
+                                            <span class="more-pill">+{{ item.matched_skills|length - 3 }}</span>
+                                        {% endif %}
+                                        {% if not item.matched_skills %}
+                                            <span class="text-muted small">None</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="table-skills-cell">
+                                        {% for skill in item.missing_skills[:3] %}
+                                            <span class="skill-tag-pill miss">{{ skill }}</span>
+                                        {% endfor %}
+                                        {% if item.missing_skills|length > 3 %}
+                                            <span class="more-pill">+{{ item.missing_skills|length - 3 }}</span>
+                                        {% endif %}
+                                        {% if not item.missing_skills %}
+                                            <span class="text-success small">None</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side-by-Side Candidate Comparison Modal -->
+    <div class="modal-backdrop" id="compareModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Candidate Side-by-Side Comparison</h3>
+                <button type="button" class="modal-close" id="closeCompareModal" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body" id="compareModalBody">
+                <!-- Dynamically populated via recruiter.js -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeCompareFooterBtn">Close</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/recruiter.js') }}"></script>
+{% endblock %}

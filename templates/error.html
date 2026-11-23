@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} — Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="card error-card">
+        <div class="error-icon-box">⚠️</div>
+        <h1 class="error-title">{{ title }}</h1>
+        <p class="error-description">{{ error_message }}</p>
+        <div class="error-actions">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Return to Homepage</a>
+            <a href="{{ url_for('candidate_mode') }}" class="btn btn-outline">Candidate Mode</a>
+            <a href="{{ url_for('recruiter_mode') }}" class="btn btn-outline">Recruiter Mode</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

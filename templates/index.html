@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Analyzer — Intelligent Resume Analysis & Job Matching Platform{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-badge">
+            <span class="badge-dot"></span> Production-Ready NLP Resume Platform
+        </div>
+        <h1 class="hero-title">
+            Match Resumes to Job Descriptions with <span class="gradient-text">Intelligent NLP</span>
+        </h1>
+        <p class="hero-description">
+            Resume Analyzer transforms resume screening into a transparent, data-driven workflow. Powered by TF-IDF vectorization, cosine similarity, and comprehensive technical skill taxonomy matching.
+        </p>
+
+        <div class="hero-cta-group">
+            <a href="{{ url_for('candidate_mode') }}" class="btn btn-primary btn-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Candidate Mode
+            </a>
+            <a href="{{ url_for('recruiter_mode') }}" class="btn btn-secondary btn-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Recruiter Mode (Batch)
+            </a>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-value">3</span>
+                <span class="stat-label">File Formats (PDF, DOCX, TXT)</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-value">100%</span>
+                <span class="stat-label">In-Memory & Ephemeral</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-value">100+</span>
+                <span class="stat-label">Curated Tech Skills</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-value">0%</span>
+                <span class="stat-label">Data Leaked or Stored</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Two Modes Showcase Section -->
+    <section class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">Designed for Job Seekers and Hiring Teams</h2>
+            <p class="section-subtitle">Select the mode tailored to your specific workflow</p>
+        </div>
+
+        <div class="mode-cards-grid">
+            <!-- Candidate Mode Card -->
+            <div class="mode-card candidate-card">
+                <div class="mode-icon-wrapper candidate-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                </div>
+                <h3>Candidate Analysis Mode</h3>
+                <p>
+                    Targeted self-assessment for individual job seekers. Upload your resume against a target job description to get a breakdown of matches, missing competencies, and formatting advice.
+                </p>
+                <ul class="feature-bullets">
+                    <li><span class="check-icon">✓</span> <strong>Overall Relevance Score:</strong> Balanced text & skill alignment.</li>
+                    <li><span class="check-icon">✓</span> <strong>Skill Gap Identification:</strong> Matched vs missing tech stack.</li>
+                    <li><span class="check-icon">✓</span> <strong>Section Detection:</strong> Validates resume structure.</li>
+                    <li><span class="check-icon">✓</span> <strong>Evidence-Based Feedback:</strong> Actionable steps to optimize.</li>
+                </ul>
+                <a href="{{ url_for('candidate_mode') }}" class="btn btn-primary btn-block">Launch Candidate Mode &rarr;</a>
+            </div>
+
+            <!-- Recruiter Mode Card -->
+            <div class="mode-card recruiter-card">
+                <div class="mode-icon-wrapper recruiter-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <h3>Recruiter Ranking Mode</h3>
+                <p>
+                    High-volume comparative screening for recruiters and hiring managers. Upload up to 10 resumes simultaneously and receive deterministic relevance rankings and comparisons.
+                </p>
+                <ul class="feature-bullets">
+                    <li><span class="check-icon">✓</span> <strong>Batch Processing:</strong> Ingest up to 10 candidate files at once.</li>
+                    <li><span class="check-icon">✓</span> <strong>Deterministic Ranking:</strong> Stable, bias-free tie-breaking.</li>
+                    <li><span class="check-icon">✓</span> <strong>Top 3 Highlights:</strong> Immediate identification of leading matches.</li>
+                    <li><span class="check-icon">✓</span> <strong>CSV Export:</strong> Instant download of ranking data for hiring syncs.</li>
+                </ul>
+                <a href="{{ url_for('recruiter_mode') }}" class="btn btn-secondary btn-block">Launch Recruiter Mode &rarr;</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Pipeline Section -->
+    <section class="section-container workflow-section">
+        <div class="section-header">
+            <h2 class="section-title">How the Matching Pipeline Works</h2>
+            <p class="section-subtitle">Deterministic, interpretable NLP with no hidden black boxes</p>
+        </div>
+
+        <div class="pipeline-grid">
+            <div class="pipeline-step">
+                <div class="step-number">01</div>
+                <h4>In-Memory Extraction</h4>
+                <p>
+                    Parses PDF, DOCX, and TXT streams entirely in RAM without storing files on disk, ensuring serverless compatibility and privacy.
+                </p>
+            </div>
+            <div class="pipeline-step">
+                <div class="step-number">02</div>
+                <h4>Taxonomy & Phrase Matching</h4>
+                <p>
+                    Multi-word boundary matching across 8 tech categories (Languages, Frameworks, Cloud, Databases) with synonym normalization.
+                </p>
+            </div>
+            <div class="pipeline-step">
+                <div class="step-number">03</div>
+                <h4>TF-IDF Vectorization</h4>
+                <p>
+                    Transforms normalized text and job specifications into term-frequency inverse-document-frequency vectors with n-gram support.
+                </p>
+            </div>
+            <div class="pipeline-step">
+                <div class="step-number">04</div>
+                <h4>Explainable Scoring</h4>
+                <p>
+                    Calculates Cosine Similarity and Skill Match Rate to output an objective, balanced relevance score with complete breakdown.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transparent Scoring Notice -->
+    <section class="section-container">
+        <div class="info-card">
+            <div class="info-icon">💡</div>
+            <div class="info-content">
+                <h3>Scientific & Algorithmic Transparency</h3>
+                <p>
+                    Resume Analyzer's relevance score is calculated as a composite index: <strong>50% TF-IDF Cosine Similarity</strong> (evaluating vocabulary and contextual keyword overlap) and <strong>50% Technical Skill Match Rate</strong> (evaluating specific required skills).
+                </p>
+                <p class="mb-0 text-muted">
+                    We deliberately do not market our score as an "Official ATS Pass Score" or "Hiring Probability", because authentic recruitment involves human judgment, behavioral interviews, and work portfolios.
+                </p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
