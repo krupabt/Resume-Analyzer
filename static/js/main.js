@@ -14,10 +14,9 @@ function initThemeToggle() {
     const themeToggleBtn = document.getElementById("themeToggleBtn");
     if (!themeToggleBtn) return;
 
-    // Load saved preference or check system prefers-color-scheme
+    // Load saved preference, defaulting to the signature Burgundy & Rose Gold theme (dark)
     const savedTheme = localStorage.getItem("resume-analyzer-theme");
-    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const currentTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+    const currentTheme = savedTheme || "dark";
 
     document.documentElement.setAttribute("data-theme", currentTheme);
 
