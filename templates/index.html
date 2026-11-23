@@ -7,13 +7,16 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-badge">
-            <span class="badge-dot"></span> Production-Ready NLP Resume Platform
+            <span class="badge-dot"></span> AI-POWERED RESUME ANALYSIS & JOB MATCHING
         </div>
         <h1 class="hero-title">
-            Match Resumes to Job Descriptions with <span class="gradient-text">Intelligent NLP</span>
+            Make Every Resume <span class="gradient-text">Count.</span>
         </h1>
-        <p class="hero-description">
-            Resume Analyzer transforms resume screening into a transparent, data-driven workflow. Powered by TF-IDF vectorization, cosine similarity, and comprehensive technical skill taxonomy matching.
+        <p class="hero-description font-semibold">
+            Analyze resumes, discover matching skills, and find the best fit for any job description — all in one intelligent platform.
+        </p>
+        <p class="hero-subdescription text-muted">
+            Resume Analyzer uses Natural Language Processing (NLP), TF-IDF, and cosine similarity to compare resumes with job requirements. Get instant match scores, identify skill gaps, and make smarter, data-driven decisions.
         </p>
 
         <div class="hero-cta-group">
@@ -22,7 +25,7 @@
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                Candidate Mode
+                Analyze My Resume
             </a>
             <a href="{{ url_for('recruiter_mode') }}" class="btn btn-secondary btn-lg">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -31,29 +34,39 @@
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
-                Recruiter Mode (Batch)
+                Rank Resumes
             </a>
         </div>
 
-        <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-value">3</span>
-                <span class="stat-label">File Formats (PDF, DOCX, TXT)</span>
+        <!-- Feature Highlights Grid -->
+        <div class="features-highlight-grid">
+            <div class="feature-highlight-card">
+                <div class="feature-highlight-icon">🎯</div>
+                <div class="feature-highlight-content">
+                    <h4>Smart Resume Matching</h4>
+                    <p>Compare resumes with job descriptions.</p>
+                </div>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-value">100%</span>
-                <span class="stat-label">In-Memory & Ephemeral</span>
+            <div class="feature-highlight-card">
+                <div class="feature-highlight-icon">🔍</div>
+                <div class="feature-highlight-content">
+                    <h4>Skill Gap Analysis</h4>
+                    <p>Identify matching and missing skills.</p>
+                </div>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-value">100+</span>
-                <span class="stat-label">Curated Tech Skills</span>
+            <div class="feature-highlight-card">
+                <div class="feature-highlight-icon">⚡</div>
+                <div class="feature-highlight-content">
+                    <h4>Instant Match Scores</h4>
+                    <p>Understand resume relevance with clear results.</p>
+                </div>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-value">0%</span>
-                <span class="stat-label">Data Leaked or Stored</span>
+            <div class="feature-highlight-card">
+                <div class="feature-highlight-icon">🏆</div>
+                <div class="feature-highlight-content">
+                    <h4>Candidate Ranking</h4>
+                    <p>Discover the most relevant resumes for a role.</p>
+                </div>
             </div>
         </div>
     </section>
