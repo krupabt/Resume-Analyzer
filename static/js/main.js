@@ -14,9 +14,9 @@ function initThemeToggle() {
     const themeToggleBtn = document.getElementById("themeToggleBtn");
     if (!themeToggleBtn) return;
 
-    // Load saved preference, defaulting to the signature Burgundy & Rose Gold theme (dark)
+    // Load saved preference, defaulting to the signature Champagne & Black theme
     const savedTheme = localStorage.getItem("resume-analyzer-theme");
-    const currentTheme = savedTheme || "dark";
+    const currentTheme = savedTheme || "champagne";
 
     document.documentElement.setAttribute("data-theme", currentTheme);
 

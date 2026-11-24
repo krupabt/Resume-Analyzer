@@ -1,22 +1,22 @@
 # Resume Analyzer
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-resume--analyzer--three--eta.vercel.app-D8AD83?style=for-the-badge&logo=vercel&logoColor=25151B)](https://resume-analyzer-three-eta.vercel.app)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-C88A92?style=for-the-badge&logo=github&logoColor=white)](https://github.com/krupabt/Resume-Analyzer)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-resume--analyzer--three--eta.vercel.app-B49459?style=for-the-badge&logo=vercel&logoColor=242424)](https://resume-analyzer-three-eta.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-242424?style=for-the-badge&logo=github&logoColor=white)](https://github.com/krupabt/Resume-Analyzer)
 
-[![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-C88A92.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Framework-Flask%203.1-D8AD83.svg)](https://palletsprojects.com/p/flask/)
-[![Scikit-Learn](https://img.shields.io/badge/NLP-Scikit--Learn%20TF--IDF-C88A92.svg)](https://scikit-learn.org/)
+[![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-242424.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Framework-Flask%203.1-B49459.svg)](https://palletsprojects.com/p/flask/)
+[![Scikit-Learn](https://img.shields.io/badge/NLP-Scikit--Learn%20TF--IDF-242424.svg)](https://scikit-learn.org/)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel%20Serverless-000000.svg)](https://resume-analyzer-three-eta.vercel.app)
-[![Tests](https://img.shields.io/badge/Tests-35%20Passed%20(pytest)-6bb387.svg)]()
-[![Theme](https://img.shields.io/badge/Theme-Burgundy%20%26%20Rose%20Gold-25151B.svg)]()
-[![License](https://img.shields.io/badge/License-MIT-6bb387.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-35%20Passed%20(pytest)-2E5A36.svg)]()
+[![Theme](https://img.shields.io/badge/Theme-Champagne%20%26%20Black-F1EBDF.svg?color=242424)]()
+[![License](https://img.shields.io/badge/License-MIT-2E5A36.svg)](LICENSE)
 
 > 🚀 **Live Production Application:** [https://resume-analyzer-three-eta.vercel.app](https://resume-analyzer-three-eta.vercel.app)  
 > 📦 **GitHub Repository:** [https://github.com/krupabt/Resume-Analyzer](https://github.com/krupabt/Resume-Analyzer)
 
 **Resume Analyzer** is a modern, production-ready web application designed for job seekers and hiring teams to evaluate document alignment using transparent, explainable Natural Language Processing (NLP). Built with Python, Flask, and Scikit-learn, Resume Analyzer parses multi-format documents (`.pdf`, `.docx`, `.txt`) entirely in-memory, identifies technical competencies across eight categorized domains, and calculates document alignment using TF-IDF n-gram vectorization and cosine similarity.
 
-Styled with a bespoke **Burgundy & Rose Gold** design system (`#25151B` background, `#C88A92` primary, `#D8AD83` secondary, and `#FFF5F2` text), featuring glassmorphic cards, glowing accents, and zero blue or cyan colors.
+Styled with a bespoke **Champagne & Black** design system (`#F1EBDF` global background, `#242424` navigation and primary buttons, `#FFFDFA` cards, `#B49459` accents, and `#242424` text), featuring clean spacing, high-contrast accessible typography, and zero blue or purple colors.
 
 ---
 
@@ -58,15 +58,15 @@ Resume Analyzer provides two dedicated workflows:
 
 ---
 
-## 🎨 Design System: Burgundy & Rose Gold
+## 🎨 Design System: Champagne & Black
 
-The application features a tailored SaaS aesthetic:
-- **Background (`#25151B`):** Deep, luxurious velvet wine burgundy with radial ambient light glows.
-- **Primary Accent (`#C88A92`):** Elegant dusty rose pink for badges, brand elements, and highlights.
-- **Secondary Accent (`#D8AD83`):** Warm champagne rose gold for primary CTAs, borders, and gauge meters.
-- **Text Primary (`#FFF5F2`):** Warm alabaster silk white for ultra-crisp legibility.
-- **Glassmorphic Surface (`rgba(45, 26, 34, 0.78)`):** Cards styled with `backdrop-filter: blur(16px)` and delicate rose gold borders.
-- **Strict Color Policy:** **Zero Blue & Zero Cyan** across all components, gradients, charts, borders, and buttons.
+The application features a tailored editorial SaaS aesthetic:
+- **Global Background (`#F1EBDF`):** Warm, sophisticated champagne linen background providing accessible contrast and clean visual rhythm.
+- **Navigation & Primary Actions (`#242424`):** Solid matte obsidian black for the top navigation header and primary buttons.
+- **Surfaces & Cards (`#FFFDFA`):** Warm alabaster cards with crisp hairlines (`#E2D9C8`) and clean spacing.
+- **Accents (`#B49459`):** Refined champagne gold for telemetry gauges, highlights, and secondary interactions.
+- **Text Primary (`#242424`):** Deep charcoal black ensuring high readability and WCAG-compliant contrast.
+- **Strict Color Policy:** **Zero Blue & Zero Purple**, removed previous gradients and glowing effects for an elegant, timeless finish.
 
 ---
 
@@ -95,7 +95,7 @@ We explicitly label this metric as a **Relevance Index** rather than an "Officia
 | **NLP & Scoring** | Scikit-learn (TfidfVectorizer, cosine_similarity), NumPy |
 | **Document Processing** | `pypdf`, `PyPDF2`, `python-docx`, `docx2txt` (in-memory) |
 | **Frontend Architecture** | Semantic HTML5, CSS3 Custom Properties, Vanilla ES6 JavaScript |
-| **Design System** | Burgundy & Rose Gold (`#25151B`, `#C88A92`, `#D8AD83`, `#FFF5F2`), Glassmorphism |
+| **Design System** | Champagne & Black (`#F1EBDF`, `#242424`, `#FFFDFA`, `#B49459`), Clean Spacing |
 | **Testing** | `pytest` (35 unit and integration tests) |
 | **Deployment** | Vercel Serverless Functions (`@vercel/python`), WSGI compatible |
 
